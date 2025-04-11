@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     DashboardPage(),
     UserManagementPage(),
-    HomePage(),
+    HomePage(), 
     HomePage(),
     HomePage(),
     HomePage(),
