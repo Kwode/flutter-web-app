@@ -1,6 +1,9 @@
 import 'package:admin_dash/pages/dashboard_page.dart';
 import 'package:admin_dash/pages/home_page.dart';
+import 'package:admin_dash/pages/logs_page.dart';
+import 'package:admin_dash/pages/trip_management_page.dart';
 import 'package:admin_dash/pages/user_management_page.dart';
+import 'package:admin_dash/pages/vehicle_management_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,18 +13,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedPageIndex = 0; // Default page is Home
+  int _selectedPageIndex = 2; // Default page is Home
 
   // List of pages
   final List<Widget> _pages = [
     DashboardPage(),
     UserManagementPage(),
-    HomePage(), 
+    VehicleManagementPage(), 
+    TripManagementPage(),
     HomePage(),
     HomePage(),
     HomePage(),
-    HomePage(),
-    HomePage(),
+    LogsPage(),
     HomePage(),
   ];
 
@@ -155,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                         ),
-                        onTap: () => _onTileTap(3),
+                        onTap: () => _onTileTap(4),
                       ),
 
                       SizedBox(height: 10),
@@ -171,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                         ),
-                        onTap: () => _onTileTap(3),
+                        onTap: () => _onTileTap(5),
                       ),
 
                       SizedBox(height: 10),
@@ -187,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                         ),
-                        onTap: () => _onTileTap(3),
+                        onTap: () => _onTileTap(6),
                       ),
 
                       SizedBox(height: 10),
@@ -203,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                         ),
-                        onTap: () => _onTileTap(3),
+                        onTap: () => _onTileTap(7),
                       ),
 
                       SizedBox(height: 10),
@@ -219,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                         ),
-                        onTap: () => _onTileTap(3),
+                        onTap: () => _onTileTap(8),
                       ),
                     ],
                   ),
