@@ -1,3 +1,5 @@
+import 'package:admin_dash/components/vehicle_form_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +8,16 @@ class VehicleManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const TextStyle _headerStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Color.fromARGB(255, 0, 34, 61),
+    );
+
+    const TextStyle _cellStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Color.fromARGB(255, 0, 34, 61),
+    );
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
@@ -29,11 +41,19 @@ class VehicleManagementPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Text(
-                          "Register Truck",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => VehicleFormDialog(),
+                            );
+                          },
+                          child: Text(
+                            "Register Truck",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -73,997 +93,87 @@ class VehicleManagementPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(
-                    label: Text(
-                      'S/N',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
+            Expanded(
+              child: StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance
+                        .collection('vehicles')
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No vehicles found.'));
+                  }
+
+                  final vehicles = snapshot.data!.docs;
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('S/N', style: _headerStyle)),
+                        DataColumn(label: Text('Driver', style: _headerStyle)),
+                        DataColumn(
+                          label: Text('Truck ID', style: _headerStyle),
+                        ),
+                        DataColumn(label: Text('Route', style: _headerStyle)),
+                        DataColumn(
+                          label: Text('Location', style: _headerStyle),
+                        ),
+                        DataColumn(
+                          label: Text('Current Trip', style: _headerStyle),
+                        ),
+                        DataColumn(
+                          label: Text('Capacity', style: _headerStyle),
+                        ),
+                        DataColumn(
+                          label: Text('Plate Number', style: _headerStyle),
+                        ),
+                      ],
+                      rows: List.generate(vehicles.length, (index) {
+                        final vehicle = vehicles[index];
+                        return DataRow(
+                          cells: [
+                            DataCell(Text('${index + 1}', style: _cellStyle)),
+                            DataCell(
+                              Text(
+                                vehicle['driverId'] ?? '-',
+                                style: _cellStyle,
+                              ),
+                            ),
+                            DataCell(
+                              Text(vehicle.id, style: _cellStyle),
+                            ), // Document ID as Truck ID
+                            DataCell(
+                              Text(vehicle['status'] ?? '-', style: _cellStyle),
+                            ), // Assuming "status" is used like route
+                            DataCell(
+                              Text('N/A', style: _cellStyle),
+                            ), // Placeholder if location not reverse-geocoded
+                            DataCell(
+                              Text(
+                                vehicle['currentTrip'] ?? '-',
+                                style: _cellStyle,
+                              ),
+                            ),
+                            DataCell(
+                              Text('${vehicle['capacity']}', style: _cellStyle),
+                            ),
+                            DataCell(
+                              Text(
+                                vehicle['plateNumber'] ?? '-',
+                                style: _cellStyle,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                     ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Truck',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Route',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Location',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Age',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Years of Work',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Jurisdiction',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                ],
-                rows: const [
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '2',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '3',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '4',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '5',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '6',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ],

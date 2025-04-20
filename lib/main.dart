@@ -7,14 +7,17 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyAhBdKftoocppn5JnemMLJevD9LKbk7WXs",
-      appId: "226910423052",
-      messagingSenderId: "226910423052",
-      projectId: "truck-management-dd830",
-    ),
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyAhBdKftoocppn5JnemMLJevD9LKbk7WXs",
+        appId: "1:226910423052:web:88c5416fe9bdb5be28c629",
+        messagingSenderId: "226910423052",
+        projectId: "truck-management-dd830",
+        storageBucket: "truck-management-dd830.appspot.com",
+      ),
+    );
+  }
 
   runApp(MyApp());
 }
