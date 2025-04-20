@@ -1,12 +1,23 @@
-import 'package:admin_dash/components/trip_form_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:admin_dash/components/trip_form_dialog.dart';
 
 class TripManagementPage extends StatelessWidget {
   const TripManagementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const TextStyle _headerStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Color.fromARGB(255, 0, 34, 61),
+    );
+
+    const TextStyle _cellStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Color.fromARGB(255, 0, 34, 61),
+    );
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
@@ -49,11 +60,9 @@ class TripManagementPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                SizedBox(width: 20),
-
+                const SizedBox(width: 20),
                 IconButton(
-                  icon: Icon(Icons.logout),
+                  icon: const Icon(Icons.logout),
                   color: const Color.fromARGB(255, 0, 34, 61),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
@@ -64,14 +73,14 @@ class TripManagementPage extends StatelessWidget {
             ),
           ),
         ],
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
+        title: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.0),
           child: Text(
             "Trip Management",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 30,
-              color: const Color.fromARGB(255, 0, 34, 61),
+              color: Color.fromARGB(255, 0, 34, 61),
             ),
           ),
         ),
@@ -79,243 +88,55 @@ class TripManagementPage extends StatelessWidget {
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SingleChildScrollView(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('trips').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return const CircularProgressIndicator();
+
+            final trips = snapshot.data!.docs;
+
+            return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: const [
+                  DataColumn(label: Text('S/N', style: _headerStyle)),
+                  DataColumn(label: Text('Trip ID', style: _headerStyle)),
+                  DataColumn(label: Text('Driver Name', style: _headerStyle)),
+                  DataColumn(label: Text('Vehicle Name', style: _headerStyle)),
+                  DataColumn(label: Text('Route', style: _headerStyle)),
                   DataColumn(
-                    label: Text(
-                      'S/N',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
+                    label: Text('Scheduled Date', style: _headerStyle),
                   ),
-                  DataColumn(
-                    label: Text(
-                      'Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Truck',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Route',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Location',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Age',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Years of Work',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Jurisdiction',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                      ),
-                    ),
-                  ),
+                  DataColumn(label: Text('Status', style: _headerStyle)),
                 ],
-                rows: const [
-                  DataRow(
+                rows: List.generate(trips.length, (index) {
+                  final trip = trips[index].data() as Map<String, dynamic>;
+
+                  return DataRow(
                     cells: [
+                      DataCell(Text('${index + 1}', style: _cellStyle)),
+                      DataCell(Text(trip['tripId'] ?? '', style: _cellStyle)),
+                      DataCell(Text(trip['driver'] ?? '', style: _cellStyle)),
+                      DataCell(Text(trip['vehicle'] ?? '', style: _cellStyle)),
+                      DataCell(Text(trip['route'] ?? '', style: _cellStyle)),
                       DataCell(
                         Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
+                          trip['scheduledDate']?.toString() ?? '',
+                          style: _cellStyle,
                         ),
                       ),
                       DataCell(
                         Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
+                          trip['status']?.toString() ?? '',
+                          style: _cellStyle,
                         ),
                       ),
                     ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          '1',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'John Stone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'johnstone@gmail.com',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Admin',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Lagos, Nigeria',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '24',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '10',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Abuja Branch',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 34, 61),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  );
+                }),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
