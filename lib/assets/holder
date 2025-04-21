@@ -1,108 +1,38 @@
-import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore, QuerySnapshot, Timestamp;
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+AppBar(
+        backgroundColor: Colors.transparent,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.notification_add,
+                  color: const Color.fromARGB(255, 0, 34, 61),
+                ),
 
-// StatusBadge widget for styled status display
-class StatusBadge extends StatelessWidget {
-  final String status;
+                SizedBox(width: 20),
 
-  const StatusBadge({required this.status});
-
-  Color getStatusColor() {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'suspended':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: getStatusColor().withOpacity(0.1),
-        border: Border.all(color: getStatusColor()),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(color: getStatusColor(), fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-// Main RecentRequestsCard Widget
-class RecentRequestsCard extends StatelessWidget {
-  const RecentRequestsCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    const TextStyle _headerStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Color.fromARGB(255, 0, 34, 61),
-    );
-
-    const TextStyle _cellStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Color.fromARGB(255, 0, 34, 61),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No users found."));
-          }
-
-          final users = snapshot.data!.docs;
-
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text('S/N', style: _headerStyle)),
-                DataColumn(label: Text('Name', style: _headerStyle)),
-                DataColumn(label: Text('Email', style: _headerStyle)),
-                DataColumn(label: Text('Status', style: _headerStyle)),
-                DataColumn(label: Text('Role', style: _headerStyle)),
-                DataColumn(label: Text('Location', style: _headerStyle)),
-                DataColumn(label: Text('Age', style: _headerStyle)),
-                DataColumn(label: Text('Jurisdiction', style: _headerStyle)),
+                IconButton(
+                  icon: Icon(Icons.logout),
+                  color: const Color.fromARGB(255, 0, 34, 61),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pushNamed(context, "login");
+                  },
+                ),
               ],
-              rows: List.generate(users.length, (index) {
-                final user = users[index].data() as Map<String, dynamic>;
-
-                return DataRow(
-                  cells: [
-                    DataCell(Text('${index + 1}', style: _cellStyle)),
-                    DataCell(Text(user['name'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['email'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['status'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['role'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['location'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['age'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['jurisdiction'] ?? '', style: _cellStyle)),
-                    DataCell(StatusBadge),
-                  ],
-                );
-              }),
             ),
-          );
-        },
+          ),
+        ],
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Text(
+            "Logs & Audits",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+              color: const Color.fromARGB(255, 0, 34, 61),
+            ),
+          ),
+        ),
       ),
-    );
-  }
-}
