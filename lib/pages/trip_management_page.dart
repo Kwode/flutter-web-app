@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:admin_dash/components/trip_form_dialog.dart';
+import 'package:intl/intl.dart';
 
 class TripManagementPage extends StatelessWidget {
   const TripManagementPage({super.key});
@@ -27,34 +28,26 @@ class TripManagementPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Row(
               children: [
-                MouseRegion(
-                  cursor:
-                      SystemMouseCursors
-                          .click, // Changes the cursor to a clickable hand
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 0, 34, 61),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => TripFormDialog(),
-                            );
-                          },
-                          child: Text(
-                            "Add Trip",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => TripFormDialog(),
+                    );
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 0, 34, 61),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Add Trip",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -85,13 +78,18 @@ class TripManagementPage extends StatelessWidget {
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('trips').snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator();
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text("No trips found."));
+            }
 
             final trips = snapshot.data!.docs;
 
@@ -112,6 +110,14 @@ class TripManagementPage extends StatelessWidget {
                 rows: List.generate(trips.length, (index) {
                   final trip = trips[index].data() as Map<String, dynamic>;
 
+                  // Format scheduled date
+                  String formattedDate = '';
+                  if (trip['scheduledDate'] != null &&
+                      trip['scheduledDate'] is Timestamp) {
+                    final date = (trip['scheduledDate'] as Timestamp).toDate();
+                    formattedDate = DateFormat('dd MMM yyyy').format(date);
+                  }
+
                   return DataRow(
                     cells: [
                       DataCell(Text('${index + 1}', style: _cellStyle)),
@@ -119,18 +125,8 @@ class TripManagementPage extends StatelessWidget {
                       DataCell(Text(trip['driver'] ?? '', style: _cellStyle)),
                       DataCell(Text(trip['vehicle'] ?? '', style: _cellStyle)),
                       DataCell(Text(trip['route'] ?? '', style: _cellStyle)),
-                      DataCell(
-                        Text(
-                          trip['scheduledDate']?.toString() ?? '',
-                          style: _cellStyle,
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          trip['status']?.toString() ?? '',
-                          style: _cellStyle,
-                        ),
-                      ),
+                      DataCell(Text(formattedDate, style: _cellStyle)),
+                      DataCell(Text(trip['status'] ?? '', style: _cellStyle)),
                     ],
                   );
                 }),

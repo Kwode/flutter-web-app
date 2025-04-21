@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  <style>
+    html, body, #map { width: 100%; height: 100%; margin: 0; }
+  </style>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+  <link rel="stylesheet" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    let platform = new H.service.Platform({
+      apikey: 'YOUR_HERE_API_KEY'
+    });
+
+    let defaultLayers = platform.createDefaultLayers();
+
+    let map = new H.Map(
+      document.getElementById('map'),
+      defaultLayers.vector.normal.map,
+      {
+        zoom: 5,
+        center: { lat: 0, lng: 0 },
+      }
+    );
+
+    let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+    let ui = H.ui.UI.createDefault(map, defaultLayers);
+
+    // You can populate this from Flutter using JS channels
+    function addMarker(lat, lng) {
+      let marker = new H.map.Marker({ lat: lat, lng: lng });
+      map.addObject(marker);
+    }
+  </script>
+</body>
+</html>

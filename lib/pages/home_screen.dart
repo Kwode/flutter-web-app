@@ -1,6 +1,7 @@
 import 'package:admin_dash/pages/dashboard_page.dart';
 import 'package:admin_dash/pages/home_page.dart';
 import 'package:admin_dash/pages/logs_page.dart';
+import 'package:admin_dash/pages/reports_page.dart';
 import 'package:admin_dash/pages/trip_management_page.dart';
 import 'package:admin_dash/pages/user_management_page.dart';
 import 'package:admin_dash/pages/vehicle_management_page.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     VehicleManagementPage(), 
     TripManagementPage(),
     HomePage(),
-    HomePage(),
+    ReportsPage(),
     HomePage(),
     LogsPage(),
     HomePage(),

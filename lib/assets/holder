@@ -90,11 +90,12 @@ class RecentRequestsCard extends StatelessWidget {
                     DataCell(Text('${index + 1}', style: _cellStyle)),
                     DataCell(Text(user['name'] ?? '', style: _cellStyle)),
                     DataCell(Text(user['email'] ?? '', style: _cellStyle)),
-                    DataCell(StatusBadge(status: user['status'] ?? 'default')),
+                    DataCell(Text(user['status'] ?? '', style: _cellStyle)),
                     DataCell(Text(user['role'] ?? '', style: _cellStyle)),
                     DataCell(Text(user['location'] ?? '', style: _cellStyle)),
                     DataCell(Text(user['age'] ?? '', style: _cellStyle)),
                     DataCell(Text(user['jurisdiction'] ?? '', style: _cellStyle)),
+                    DataCell(StatusBadge),
                   ],
                 );
               }),

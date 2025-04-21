@@ -1,5 +1,6 @@
 import 'package:admin_dash/pages/home_screen.dart';
 import 'package:admin_dash/pages/login_page.dart';
+import 'package:admin_dash/pages/reports_page.dart';
 import 'package:admin_dash/pages/signup_page.dart';
 import 'package:admin_dash/pages/user_management_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         "home": (context) => HomeScreen(),
         "signup": (context) => SignupPage(),
         "user": (context) => UserManagementPage(),
+        "reports": (context) => ReportsPage(),
       },
     );
   }
