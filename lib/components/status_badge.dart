@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class StatusBadge extends StatelessWidget {
   final String status;
 
-  const StatusBadge({required this.status});
+  const StatusBadge({super.key, required this.status});
 
   Color getStatusColor() {
     switch (status.toLowerCase()) {
@@ -40,16 +40,16 @@ class StatusBadge extends StatelessWidget {
 
 // Main RecentRequestsCard Widget
 class RecentRequestsCard extends StatelessWidget {
-  const RecentRequestsCard({Key? key}) : super(key: key);
+  const RecentRequestsCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const TextStyle _headerStyle = TextStyle(
+    const TextStyle headerStyle = TextStyle(
       fontWeight: FontWeight.bold,
       color: Color.fromARGB(255, 0, 34, 61),
     );
 
-    const TextStyle _cellStyle = TextStyle(
+    const TextStyle cellStyle = TextStyle(
       fontWeight: FontWeight.bold,
       color: Color.fromARGB(255, 0, 34, 61),
     );
@@ -73,28 +73,28 @@ class RecentRequestsCard extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: DataTable(
               columns: const [
-                DataColumn(label: Text('S/N', style: _headerStyle)),
-                DataColumn(label: Text('Name', style: _headerStyle)),
-                DataColumn(label: Text('Email', style: _headerStyle)),
-                DataColumn(label: Text('Status', style: _headerStyle)),
-                DataColumn(label: Text('Role', style: _headerStyle)),
-                DataColumn(label: Text('Location', style: _headerStyle)),
-                DataColumn(label: Text('Age', style: _headerStyle)),
-                DataColumn(label: Text('Jurisdiction', style: _headerStyle)),
+                DataColumn(label: Text('S/N', style: headerStyle)),
+                DataColumn(label: Text('Name', style: headerStyle)),
+                DataColumn(label: Text('Email', style: headerStyle)),
+                DataColumn(label: Text('Status', style: headerStyle)),
+                DataColumn(label: Text('Role', style: headerStyle)),
+                DataColumn(label: Text('Location', style: headerStyle)),
+                DataColumn(label: Text('Age', style: headerStyle)),
+                DataColumn(label: Text('Jurisdiction', style: headerStyle)),
               ],
               rows: List.generate(users.length, (index) {
                 final user = users[index].data() as Map<String, dynamic>;
 
                 return DataRow(
                   cells: [
-                    DataCell(Text('${index + 1}', style: _cellStyle)),
-                    DataCell(Text(user['name'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['email'] ?? '', style: _cellStyle)),
+                    DataCell(Text('${index + 1}', style: cellStyle)),
+                    DataCell(Text(user['name'] ?? '', style: cellStyle)),
+                    DataCell(Text(user['email'] ?? '', style: cellStyle)),
                     DataCell(StatusBadge(status: user['status'] ?? 'default')),
-                    DataCell(Text(user['role'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['location'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['age'] ?? '', style: _cellStyle)),
-                    DataCell(Text(user['jurisdiction'] ?? '', style: _cellStyle)),
+                    DataCell(Text(user['role'] ?? '', style: cellStyle)),
+                    DataCell(Text(user['location'] ?? '', style: cellStyle)),
+                    DataCell(Text(user['age'] ?? '', style: cellStyle)),
+                    DataCell(Text(user['jurisdiction'] ?? '', style: cellStyle)),
                   ],
                 );
               }),

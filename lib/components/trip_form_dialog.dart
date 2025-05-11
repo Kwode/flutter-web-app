@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class TripFormDialog extends StatefulWidget {
+  const TripFormDialog({super.key});
+
   @override
   _TripFormDialogState createState() => _TripFormDialogState();
 }

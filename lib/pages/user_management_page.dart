@@ -16,7 +16,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Widget build(BuildContext context) {
     // Show the Create User dialog when clicked
     void showCustomCreateUserDialog(BuildContext context) {
-      final _formKey = GlobalKey<FormState>();
+      final formKey = GlobalKey<FormState>();
       final nameController = TextEditingController();
       final emailController = TextEditingController();
       final locationController = TextEditingController();
@@ -28,7 +28,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       bool isLoading = false;
 
       void createUser() async {
-        if (_formKey.currentState!.validate()) {
+        if (formKey.currentState!.validate()) {
           // Show loading indicator
           setState(() => isLoading = true);
 
@@ -91,7 +91,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : Form(
-                      key: _formKey,
+                      key: formKey,
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,

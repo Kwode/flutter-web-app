@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class VehicleFormDialog extends StatefulWidget {
+  const VehicleFormDialog({super.key});
+
   @override
   _VehicleFormDialogState createState() => _VehicleFormDialogState();
 }

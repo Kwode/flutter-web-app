@@ -15,7 +15,7 @@ const TextStyle _cellStyle = TextStyle(
 );
 
 class ReportsPage extends StatelessWidget {
-  const ReportsPage({Key? key}) : super(key: key);
+  const ReportsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +259,7 @@ class ReportsPage extends StatelessWidget {
 class RoleDistributionChart extends StatelessWidget {
   final List<int> counts;
 
-  const RoleDistributionChart(this.counts, {Key? key}) : super(key: key);
+  const RoleDistributionChart(this.counts, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -309,8 +309,9 @@ class RoleDistributionChart extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   final labels = ['Admin', 'Driver', 'Customer'];
                   final index = value.toInt();
-                  if (index < 0 || index >= labels.length)
+                  if (index < 0 || index >= labels.length) {
                     return const SizedBox.shrink();
+                  }
 
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),

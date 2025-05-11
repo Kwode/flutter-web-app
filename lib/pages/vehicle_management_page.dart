@@ -8,12 +8,12 @@ class VehicleManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const TextStyle _headerStyle = TextStyle(
+    const TextStyle headerStyle = TextStyle(
       fontWeight: FontWeight.bold,
       color: Color.fromARGB(255, 0, 34, 61),
     );
 
-    const TextStyle _cellStyle = TextStyle(
+    const TextStyle cellStyle = TextStyle(
       fontWeight: FontWeight.bold,
       color: Color.fromARGB(255, 0, 34, 61),
     );
@@ -114,58 +114,58 @@ class VehicleManagementPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       columns: const [
-                        DataColumn(label: Text('S/N', style: _headerStyle)),
-                        DataColumn(label: Text('Driver', style: _headerStyle)),
+                        DataColumn(label: Text('S/N', style: headerStyle)),
+                        DataColumn(label: Text('Driver', style: headerStyle)),
                         DataColumn(
-                          label: Text('Truck ID', style: _headerStyle),
+                          label: Text('Truck ID', style: headerStyle),
                         ),
-                        DataColumn(label: Text('Route', style: _headerStyle)),
+                        DataColumn(label: Text('Route', style: headerStyle)),
                         DataColumn(
-                          label: Text('Location', style: _headerStyle),
-                        ),
-                        DataColumn(
-                          label: Text('Current Trip', style: _headerStyle),
+                          label: Text('Location', style: headerStyle),
                         ),
                         DataColumn(
-                          label: Text('Capacity', style: _headerStyle),
+                          label: Text('Current Trip', style: headerStyle),
                         ),
                         DataColumn(
-                          label: Text('Plate Number', style: _headerStyle),
+                          label: Text('Capacity', style: headerStyle),
+                        ),
+                        DataColumn(
+                          label: Text('Plate Number', style: headerStyle),
                         ),
                       ],
                       rows: List.generate(vehicles.length, (index) {
                         final vehicle = vehicles[index];
                         return DataRow(
                           cells: [
-                            DataCell(Text('${index + 1}', style: _cellStyle)),
+                            DataCell(Text('${index + 1}', style: cellStyle)),
                             DataCell(
                               Text(
                                 vehicle['driverId'] ?? '-',
-                                style: _cellStyle,
+                                style: cellStyle,
                               ),
                             ),
                             DataCell(
-                              Text(vehicle.id, style: _cellStyle),
+                              Text(vehicle.id, style: cellStyle),
                             ), // Document ID as Truck ID
                             DataCell(
-                              Text(vehicle['status'] ?? '-', style: _cellStyle),
+                              Text(vehicle['status'] ?? '-', style: cellStyle),
                             ), // Assuming "status" is used like route
                             DataCell(
-                              Text('N/A', style: _cellStyle),
+                              Text('N/A', style: cellStyle),
                             ), // Placeholder if location not reverse-geocoded
                             DataCell(
                               Text(
                                 vehicle['currentTrip'] ?? '-',
-                                style: _cellStyle,
+                                style: cellStyle,
                               ),
                             ),
                             DataCell(
-                              Text('${vehicle['capacity']}', style: _cellStyle),
+                              Text('${vehicle['capacity']}', style: cellStyle),
                             ),
                             DataCell(
                               Text(
                                 vehicle['plateNumber'] ?? '-',
-                                style: _cellStyle,
+                                style: cellStyle,
                               ),
                             ),
                           ],
